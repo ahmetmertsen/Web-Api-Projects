@@ -1,4 +1,6 @@
-﻿using ECommerceAPI.Domain.Entities.Identity;
+﻿using ECommerceAPI.Application.Abstractions.Token;
+using ECommerceAPI.Application.Dtos;
+using ECommerceAPI.Domain.Entities.Identity;
 using ECommerceAPI.Domain.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
@@ -14,11 +16,13 @@ namespace ECommerceAPI.Application.Features.AppUser.Commands.Login
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
+        private readonly ITokenHandler _tokenHandler;
 
-        public LoginUserCommandHandler(UserManager<User> userManager, SignInManager<User> signInManager)
+        public LoginUserCommandHandler(UserManager<User> userManager, SignInManager<User> signInManager, ITokenHandler tokenHandler)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _tokenHandler = tokenHandler;
         }
 
         public async Task<LoginUserCommandResponse> Handle(LoginUserCommand request, CancellationToken cancellationToken)
@@ -32,12 +36,18 @@ namespace ECommerceAPI.Application.Features.AppUser.Commands.Login
             var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
             if (result.Succeeded)
             {
-                //Yetkiler
+                Token token = _tokenHandler.CreateAccessToken();
+                return new LoginUserCommandResponse
+                {
+                    Succeeded = true,
+                    Message = "Giriş işlemi başarılı.",
+                    Token = token
+                };
             } else
             {
                 throw new UnauthorizedAccessException("Kullanıcı adı veya şifre hatalı!");
             }
-            return new LoginUserCommandResponse(true,"Giriş işlemi başarılı.");
+            
         }
     }
 }
