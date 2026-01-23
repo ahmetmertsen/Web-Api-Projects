@@ -1,4 +1,5 @@
-﻿using ECommerceAPI.Application.Abstractions.Token;
+﻿using ECommerceAPI.Application.Abstractions.Services;
+using ECommerceAPI.Application.Abstractions.Token;
 using ECommerceAPI.Application.Dtos;
 using ECommerceAPI.Domain.Entities.Identity;
 using ECommerceAPI.Domain.Exceptions;
@@ -14,40 +15,28 @@ namespace ECommerceAPI.Application.Features.AppUser.Commands.Login
 {
     public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, LoginUserCommandResponse>
     {
-        private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
-        private readonly ITokenHandler _tokenHandler;
+        private readonly IAuthService _authService;
 
-        public LoginUserCommandHandler(UserManager<User> userManager, SignInManager<User> signInManager, ITokenHandler tokenHandler)
+        public LoginUserCommandHandler(IAuthService authService)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _tokenHandler = tokenHandler;
+            _authService = authService;
         }
 
         public async Task<LoginUserCommandResponse> Handle(LoginUserCommand request, CancellationToken cancellationToken)
         {
-            var user =  await _userManager.FindByEmailAsync(request.Email);
-            if (user == null)
+            var token = await _authService.LoginAsync(request.Email, request.Password);
+            if (token == null)
             {
-                throw new NotFoundException("Kullanıcı adı veya şifre hatalı! Kullanıcı Bulunamadı...");
-            }
-
-            var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
-            if (result.Succeeded)
+                throw new UnauthorizedAccessException("Email veya şifre hatalı!");
+            } else
             {
-                Token token = _tokenHandler.CreateAccessToken();
                 return new LoginUserCommandResponse
                 {
                     Succeeded = true,
-                    Message = "Giriş işlemi başarılı.",
+                    Message = "Giriş başarılı.",
                     Token = token
                 };
-            } else
-            {
-                throw new UnauthorizedAccessException("Kullanıcı adı veya şifre hatalı!");
-            }
-            
+            }  
         }
     }
 }

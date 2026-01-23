@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ECommerceAPI.Application.Dtos;
+using ECommerceAPI.Application.Dtos.User;
 using ECommerceAPI.Application.Features.AppUser.Commands.Create;
 using ECommerceAPI.Domain.Entities.Identity;
 using System;
@@ -15,6 +16,8 @@ namespace ECommerceAPI.Application.Mapping.UserMapper
         public UserProfile() 
         {
             CreateMap<CreateUserCommand, User>();
+            CreateMap<CreateUserCommand, CreateUser>();
+            CreateMap<CreateUser, User>();
 
             CreateMap<User,UserDto>();
 

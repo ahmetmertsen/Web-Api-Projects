@@ -8,22 +8,21 @@ namespace ECommerceAPI.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class AuthController : ControllerBase
     {
         private readonly IMediator _mediatR;
 
-        public UserController(IMediator mediatR)
+        public AuthController(IMediator mediatR)
         {
             _mediatR = mediatR;
         }
 
         [HttpPost]
-        [Route("create")]
-        public async Task<IActionResult> Create([FromBody] CreateUserCommand request)
+        [Route("login")]
+        public async Task<IActionResult> Login([FromBody] LoginUserCommand request)
         {
             var response = await _mediatR.Send(request);
             return Ok(response);
         }
-
     }
 }
