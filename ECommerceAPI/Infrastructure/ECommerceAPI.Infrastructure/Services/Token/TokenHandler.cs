@@ -29,7 +29,7 @@ namespace ECommerceAPI.Infrastructure.Services.Token
             //Şifrelenmiş kimliği oluşturuyoruz.
             SigningCredentials signingCredentials = new(securityKey, SecurityAlgorithms.HmacSha256);
             //Oluşturulacak token ayarlarını veriyoruz.
-            token.Expiration = DateTime.UtcNow.AddMinutes(20);
+            token.Expiration = DateTime.UtcNow.AddMinutes(60);
             JwtSecurityToken securityToken = new(
                 audience: _configuration["Token:Auidence"],
                 issuer: _configuration["Token:Issuer"],
@@ -41,7 +41,17 @@ namespace ECommerceAPI.Infrastructure.Services.Token
             //Token oluşturucu sınıfından bir örnek
             JwtSecurityTokenHandler tokenHandler = new();
             token.AccessToken = tokenHandler.WriteToken(securityToken);
+            token.RefreshToken = CreateRefreshToken();
+
             return token;
+        }
+
+        public string CreateRefreshToken()
+        {
+            byte[] number = new byte[32];
+            using RandomNumberGenerator random = RandomNumberGenerator.Create();
+            random.GetBytes(number);
+            return Convert.ToBase64String(number);
         }
     }
 }

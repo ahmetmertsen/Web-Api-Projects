@@ -7,6 +7,7 @@ using ECommerceAPI.Domain.Entities.Identity;
 using ECommerceAPI.Domain.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,13 +22,15 @@ namespace ECommerceAPI.Persistence.Services
         private readonly SignInManager<User> _signInManager;
         private readonly IMapper _mapper;
         private readonly ITokenHandler _tokenHandler;
+        private readonly IUserService _userService;
 
-        public AuthService(UserManager<User> userManager, IMapper mapper, ITokenHandler tokenHandler, SignInManager<User> signInManager )
+        public AuthService(UserManager<User> userManager, IMapper mapper, ITokenHandler tokenHandler, SignInManager<User> signInManager, IUserService userService )
         {
             _userManager = userManager;
             _mapper = mapper;
             _tokenHandler = tokenHandler;
             _signInManager = signInManager;
+            _userService = userService;
         }
 
         public async Task<Token> LoginAsync(string email, string password)
@@ -42,11 +45,27 @@ namespace ECommerceAPI.Persistence.Services
             if (result.Succeeded)
             {
                 Token token = _tokenHandler.CreateAccessToken();
+                await _userService.UpdateRefreshToken(token.RefreshToken, user, token.Expiration);
                 return token;
             }
             else
             {
                 throw new UnauthorizedAccessException("Kullanıcı adı veya şifre hatalı!");
+            }
+        }
+
+        public async Task<Token> RefreshTokenLoginAsync(string refreshToken)
+        {
+            User? user = await _userManager.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
+            if (user != null && user?.RefreshTokenEndDate > DateTime.UtcNow)
+            {
+                Token token = _tokenHandler.CreateAccessToken();
+                await _userService.UpdateRefreshToken(token.RefreshToken, user, token.Expiration);
+                return token;
+            }
+            else
+            {
+                throw new NotFoundException("Kullanıcı bulunumadı!");
             }
         }
     }

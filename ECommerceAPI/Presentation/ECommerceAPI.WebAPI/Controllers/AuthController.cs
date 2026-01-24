@@ -1,5 +1,6 @@
 ﻿using ECommerceAPI.Application.Features.AppUser.Commands.Create;
 using ECommerceAPI.Application.Features.AppUser.Commands.Login;
+using ECommerceAPI.Application.Features.AppUser.Commands.RefreshTokenLogin;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +21,14 @@ namespace ECommerceAPI.WebAPI.Controllers
         [HttpPost]
         [Route("login")]
         public async Task<IActionResult> Login([FromBody] LoginUserCommand request)
+        {
+            var response = await _mediatR.Send(request);
+            return Ok(response);
+        }
+
+        [HttpGet]
+        [Route("refreshToken")]
+        public async Task<IActionResult> RefreshTokenLogin([FromForm] RefreshTokenLoginCommand request)
         {
             var response = await _mediatR.Send(request);
             return Ok(response);

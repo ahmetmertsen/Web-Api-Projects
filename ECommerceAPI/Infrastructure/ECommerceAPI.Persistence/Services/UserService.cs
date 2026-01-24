@@ -61,5 +61,18 @@ namespace ECommerceAPI.Persistence.Services
                 throw new CreateUserFailedException($"Kayıt sırasında hata oluştu. {errors}");
             }
         }
+
+        public async Task UpdateRefreshToken(string refreshToken, User user, DateTime accesTokenDate)
+        {
+            if (user != null)
+            {
+                user.RefreshToken = refreshToken;
+                user.RefreshTokenEndDate = accesTokenDate.AddMinutes(20);
+                await _userManager.UpdateAsync(user);
+            } else
+            {
+                throw new NotFoundException("Kullanıcı bulunamadı!");
+            }    
+        }
     }
 }
