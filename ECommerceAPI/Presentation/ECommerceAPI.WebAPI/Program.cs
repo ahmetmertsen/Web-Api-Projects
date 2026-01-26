@@ -1,14 +1,17 @@
-using ECommerceAPI.Application.Features.Customers.Commands.Create;
+ï»¿using ECommerceAPI.Application.Features.Customers.Commands.Create;
 using ECommerceAPI.Application.Mapping.CustomerMapper;
 using ECommerceAPI.Application.Validators.CustomerValidator;
-using ECommerceAPI.Persistence;
 using ECommerceAPI.Infrastructure;
+using ECommerceAPI.Persistence;
 using ECommerceAPI.WebAPI.Middlewares;
 using FluentValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace ECommerceAPI.WebAPI
 {
@@ -23,27 +26,41 @@ namespace ECommerceAPI.WebAPI
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
-
-            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer("Admin", options =>
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo
                 {
-                    options.TokenValidationParameters = new()
-                    {
-                        // Doðrulamasý gereken deðerler
-                        ValidateAudience = true, //Oluþturulacak token deðerini kimlerin/hangi originlerin/sitelerin kullanýcýðýný belirlediðimiz deðerdir.
-                        ValidateIssuer = true, // Oluþturulacak token deðerini kimin daðýttýný ifade edeceðimiz alanýdýr.
-                        ValidateLifetime = true, //Oluþturulan token deðerinin süresini kontrol edecek olan doðrulamadýr.
-                        ValidateIssuerSigningKey = true, //Üretilecek token deðerinin uygulamamýza ait bir deðer olduðunu ifade eden security key verisinin doðrulanmasýdýr.
-
-                        ValidAudience = builder.Configuration["Token:Audience"],
-                        ValidIssuer = builder.Configuration["Token:Issuer"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Token:SecurityKey"])),
-                        LifetimeValidator = (notBefore, expires, securityToken, validationParameters) => expires != null ? expires > DateTime.UtcNow : false
-                    };
+                    Title = "ECommerceAPI",
+                    Version = "v1",
                 });
 
+                c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
+                    Scheme = "bearer",
+                    BearerFormat = "JWT",
+                    In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+                    Description = "JWT Authorization header kullanÄ±mÄ±: token"
+                });
 
+                c.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement()
+                {
+                    { 
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        }
+                    },
+                    Array.Empty<string>()
+                }
+                });
+            });
+
+            
             builder.Services.AddPersistenceService(builder.Configuration);
             builder.Services.AddInfrastructureServices(builder.Configuration);
 
@@ -53,6 +70,57 @@ namespace ECommerceAPI.WebAPI
             builder.Services.AddValidatorsFromAssemblyContaining<CreateCustomerCommandValidator>();
 
             builder.Services.AddAutoMapper(typeof(CustomerProfile).Assembly);
+
+            #region Authentication-Authorization
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new()
+                    {
+                        // DoÄŸrulamasÄ± gereken deÄŸerler
+                        ValidateAudience = true, //OluÅŸturulacak token deÄŸerini kimlerin/hangi originlerin/sitelerin kullanÄ±cÄ±ÄŸÄ±nÄ± belirlediÄŸimiz deÄŸerdir.
+                        ValidateIssuer = true, // OluÅŸturulacak token deÄŸerini kimin daÄŸÄ±ttÄ±nÄ± ifade edeceÄŸimiz alanÄ±dÄ±r.
+                        ValidateLifetime = true, //OluÅŸturulan token deÄŸerinin sÃ¼resini kontrol edecek olan doÄŸrulamadÄ±r.
+                        ValidateIssuerSigningKey = true, //Ãœretilecek token deÄŸerinin uygulamamÄ±za ait bir deÄŸer olduÄŸunu ifade eden security key verisinin doÄŸrulanmasÄ±dÄ±r.
+
+                        ValidAudience = builder.Configuration["Token:Audience"],
+                        ValidIssuer = builder.Configuration["Token:Issuer"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Token:SecurityKey"])),
+                        NameClaimType = JwtRegisteredClaimNames.UniqueName,
+                        RoleClaimType = ClaimTypes.Role,
+                        ClockSkew = TimeSpan.FromMinutes(1)
+                    };
+                });
+
+            builder.Services.AddAuthorization(options =>
+            {
+                options.DefaultPolicy = new Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder(
+                    JwtBearerDefaults.AuthenticationScheme
+                )
+                .RequireAuthenticatedUser()
+                .Build();
+            });
+
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.Events.OnRedirectToLogin = context =>
+                {
+                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    return Task.CompletedTask;
+                };
+
+                options.Events.OnRedirectToAccessDenied = context =>
+                {
+                    context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                    return Task.CompletedTask;
+                };
+            });
+            #endregion
 
 
             var app = builder.Build();

@@ -44,6 +44,10 @@ namespace ECommerceAPI.WebAPI.Middlewares
                     statusCode = (int)HttpStatusCode.BadRequest;
                     message = ex.Message;
                     break;
+                case UnauthorizedAccessException:
+                    statusCode = (int)HttpStatusCode.Unauthorized;
+                    message = ex.Message;
+                    break;
                 default:
                     statusCode = (int)HttpStatusCode.InternalServerError;
                     message = ex.Message;

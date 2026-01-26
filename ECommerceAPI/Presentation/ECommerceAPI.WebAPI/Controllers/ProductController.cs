@@ -7,12 +7,13 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace ECommerceAPI.WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(AuthenticationSchemes ="Admin")]
+
     public class ProductController : ControllerBase
     {
         private readonly IMediator _mediatR;
@@ -38,6 +39,7 @@ namespace ECommerceAPI.WebAPI.Controllers
             return Ok(response);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [Route("create")]
         public async Task<IActionResult> Create([FromBody] CreateProductCommand request)
@@ -46,6 +48,7 @@ namespace ECommerceAPI.WebAPI.Controllers
             return Ok(response);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut]
         [Route("update")]
         public async Task<IActionResult> Update([FromBody] UpdateProductCommand request)
@@ -54,6 +57,7 @@ namespace ECommerceAPI.WebAPI.Controllers
             return Ok(response);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete]
         [Route("delete/{id}")]
         public async Task<IActionResult> Delete(int id) 
@@ -61,6 +65,5 @@ namespace ECommerceAPI.WebAPI.Controllers
             var response = await _mediatR.Send(new DeleteProductCommand(id));
             return Ok(response);
         }
-
     }
 }
