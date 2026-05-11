@@ -1,12 +1,8 @@
-﻿using ECommerceAPI.Application.Features.Customers.Commands.Create;
-using ECommerceAPI.Application.Mapping.CustomerMapper;
-using ECommerceAPI.Application.Validators.CustomerValidator;
+﻿using ECommerceAPI.Application;
 using ECommerceAPI.Infrastructure;
 using ECommerceAPI.Persistence;
 using ECommerceAPI.WebAPI.Middlewares;
-using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.IdentityModel.Tokens.Jwt;
@@ -60,16 +56,12 @@ namespace ECommerceAPI.WebAPI
                 });
             });
 
-            
+
+            builder.Services.AddApplicationService();
             builder.Services.AddPersistenceService(builder.Configuration);
             builder.Services.AddInfrastructureServices(builder.Configuration);
 
-            builder.Services.AddMediatR(cfg =>
-                    cfg.RegisterServicesFromAssemblyContaining<CreateCustomerCommand>());
-
-            builder.Services.AddValidatorsFromAssemblyContaining<CreateCustomerCommandValidator>();
-
-            builder.Services.AddAutoMapper(typeof(CustomerProfile).Assembly);
+            
 
             #region Authentication-Authorization
             builder.Services.AddAuthentication(options =>

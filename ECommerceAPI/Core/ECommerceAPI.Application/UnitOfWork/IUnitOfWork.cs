@@ -17,6 +17,8 @@ namespace ECommerceAPI.Application.UnitOfWork
         public IOrderItemRepository OrderItemRepository { get; }
         public IProductRepository ProductRepository { get; }
         public IPaymentRepository PaymentRepository { get; }
+        public IMenuRepository MenuRepository { get; }
+        public IEndpointRepository EndpointRepository { get; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 

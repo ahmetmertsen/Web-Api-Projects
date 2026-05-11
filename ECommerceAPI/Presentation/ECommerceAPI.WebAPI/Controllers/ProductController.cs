@@ -1,4 +1,6 @@
-﻿using ECommerceAPI.Application.Features.Products.Commands.Create;
+﻿using ECommerceAPI.Application.Consts;
+using ECommerceAPI.Application.CustomAttributes;
+using ECommerceAPI.Application.Features.Products.Commands.Create;
 using ECommerceAPI.Application.Features.Products.Commands.Delete;
 using ECommerceAPI.Application.Features.Products.Commands.Update;
 using ECommerceAPI.Application.Features.Products.Queries.GetAll;
@@ -40,6 +42,7 @@ namespace ECommerceAPI.WebAPI.Controllers
         }
 
         [Authorize(Roles = "Admin")]
+        [AuthorizeDefinition(Menu = AuthorizeDefinitionConstants.Products, ActionType = Domain.Enum.ActionType.Writing, Definition = "Create Product")]
         [HttpPost]
         [Route("create")]
         public async Task<IActionResult> Create([FromBody] CreateProductCommand request)
@@ -49,6 +52,7 @@ namespace ECommerceAPI.WebAPI.Controllers
         }
 
         [Authorize(Roles = "Admin")]
+        [AuthorizeDefinition(Menu = AuthorizeDefinitionConstants.Products, ActionType = Domain.Enum.ActionType.Updating, Definition = "Update Product")]
         [HttpPut]
         [Route("update")]
         public async Task<IActionResult> Update([FromBody] UpdateProductCommand request)
@@ -58,6 +62,7 @@ namespace ECommerceAPI.WebAPI.Controllers
         }
 
         [Authorize(Roles = "Admin")]
+        [AuthorizeDefinition(Menu = AuthorizeDefinitionConstants.Products, ActionType = Domain.Enum.ActionType.Deleting, Definition = "Delete Product")]
         [HttpDelete]
         [Route("delete/{id}")]
         public async Task<IActionResult> Delete(int id) 

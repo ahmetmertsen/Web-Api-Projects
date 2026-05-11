@@ -1,4 +1,6 @@
-﻿using ECommerceAPI.Application.Features.Orders.Commands.Create;
+﻿using ECommerceAPI.Application.Consts;
+using ECommerceAPI.Application.CustomAttributes;
+using ECommerceAPI.Application.Features.Orders.Commands.Create;
 using ECommerceAPI.Application.Features.Orders.Commands.Update;
 using ECommerceAPI.Application.Features.Orders.Queries.GetAll;
 using ECommerceAPI.Application.Features.Orders.Queries.GetById;
@@ -21,6 +23,7 @@ namespace ECommerceAPI.WebAPI.Controllers
 
         [HttpGet]
         [Route("getAllByCustomerId/{customerId}")]
+        [AuthorizeDefinition(Menu = AuthorizeDefinitionConstants.Orders, ActionType = Domain.Enum.ActionType.Reading, Definition = "Get Orders By CustomerId")]
         public async Task<IActionResult> GetAllByCustomerId(int customerId)
         {
             var response = await _mediatR.Send(new GetAllOrdersByCustomerIdRequest(customerId));
@@ -29,6 +32,7 @@ namespace ECommerceAPI.WebAPI.Controllers
 
         [HttpGet]
         [Route("getById/{id}")]
+        [AuthorizeDefinition(Menu = AuthorizeDefinitionConstants.Orders, ActionType = Domain.Enum.ActionType.Reading, Definition = "Get Order By Id")]
         public async Task<IActionResult> GetById(int id)
         {
             var response = await _mediatR.Send(new GetByIdOrderRequest(id));
@@ -37,6 +41,7 @@ namespace ECommerceAPI.WebAPI.Controllers
 
         [HttpPost]
         [Route("create")]
+        [AuthorizeDefinition(Menu = AuthorizeDefinitionConstants.Orders, ActionType = Domain.Enum.ActionType.Writing, Definition = "Create Order")]
         public async Task<IActionResult> Create([FromBody] CreateOrderCommand request)
         {
             var response = await _mediatR.Send(request);
@@ -45,6 +50,7 @@ namespace ECommerceAPI.WebAPI.Controllers
 
         [HttpPut]
         [Route("updateOrderStatus")]
+        [AuthorizeDefinition(Menu = AuthorizeDefinitionConstants.Orders, ActionType = Domain.Enum.ActionType.Updating, Definition = "Update Order Status")]
         public async Task<IActionResult> UpdateOrderStatus([FromBody] UpdateOrderStatusCommand request)
         {
             var response = await _mediatR.Send(request);

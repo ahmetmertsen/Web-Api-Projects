@@ -22,6 +22,8 @@ namespace ECommerceAPI.Persistence.Contexts
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Payment> Payments { get; set; }
+        public DbSet<Menu> Menus { get; set; }
+        public DbSet<Endpoint> Endpoints { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

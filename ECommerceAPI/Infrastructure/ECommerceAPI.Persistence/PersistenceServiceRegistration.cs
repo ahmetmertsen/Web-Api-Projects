@@ -43,12 +43,16 @@ namespace ECommerceAPI.Persistence
             services.AddScoped<IOrderItemRepository, OrderItemRepository>();
             services.AddScoped<IAddressRepository, AddressRepository>();
             services.AddScoped<IPaymentRepository, PaymentRepository>();
+            services.AddScoped<IMenuRepository, MenuRepository>();
+            services.AddScoped<IEndpointRepository, EndpointRepository>();
 
             // Serviceler
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IInternalAuthentication, AuthService>();
             services.AddScoped<IExternalAuthentication, AuthService>();
+            services.AddScoped<IAuthorizationEndpointService, AuthorizationEndpointService>();
 
             services.AddScoped<IUnitOfWork, UnitOfWorkP>();
 

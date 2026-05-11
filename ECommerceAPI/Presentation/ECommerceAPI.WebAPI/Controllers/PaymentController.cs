@@ -1,4 +1,6 @@
-﻿using ECommerceAPI.Application.Features.Payments.Commands.Create;
+﻿using ECommerceAPI.Application.Consts;
+using ECommerceAPI.Application.CustomAttributes;
+using ECommerceAPI.Application.Features.Payments.Commands.Create;
 using ECommerceAPI.Application.Features.Payments.Commands.UpdatePaymentStatus;
 using ECommerceAPI.Application.Features.Payments.Queries.GetAll;
 using ECommerceAPI.Application.Features.Payments.Queries.GetById.GetPaymentById;
@@ -20,6 +22,7 @@ namespace ECommerceAPI.WebAPI.Controllers
             _mediatR = mediatR;
         }
 
+        [AuthorizeDefinition(Menu = AuthorizeDefinitionConstants.Payments, ActionType = Domain.Enum.ActionType.Reading, Definition = "Get All Payments")]
         [HttpGet]
         [Route("getAll")]
         public async Task<IActionResult> GetAll()
@@ -28,6 +31,7 @@ namespace ECommerceAPI.WebAPI.Controllers
             return Ok(response);
         }
 
+        [AuthorizeDefinition(Menu = AuthorizeDefinitionConstants.Payments, ActionType = Domain.Enum.ActionType.Reading, Definition = "Get Payment By Id")]
         [HttpGet]
         [Route("GetById/{id}")]
         public async Task<IActionResult> GetById(int id)
@@ -36,6 +40,7 @@ namespace ECommerceAPI.WebAPI.Controllers
             return Ok(response);
         }
 
+        [AuthorizeDefinition(Menu = AuthorizeDefinitionConstants.Payments, ActionType = Domain.Enum.ActionType.Reading, Definition = "Get Payment By OrderId")]
         [HttpGet]
         [Route("getByOrderId/{orderId}")]
         public async Task<IActionResult> GetByOrderId(int orderId)
@@ -44,6 +49,7 @@ namespace ECommerceAPI.WebAPI.Controllers
             return Ok(response);
         }
 
+        [AuthorizeDefinition(Menu = AuthorizeDefinitionConstants.Payments, ActionType = Domain.Enum.ActionType.Writing, Definition = "Create Payment")]
         [HttpPost]
         [Route("create")]
         public async Task<IActionResult> Create([FromBody] CreatePaymentCommand request)
@@ -52,6 +58,7 @@ namespace ECommerceAPI.WebAPI.Controllers
             return Ok(response);
         }
 
+        [AuthorizeDefinition(Menu = AuthorizeDefinitionConstants.Payments, ActionType = Domain.Enum.ActionType.Updating, Definition = "Update Payment Status")]
         [HttpPut]
         [Route("updateStatus")]
         public async Task<IActionResult> UpdateStatus([FromBody] UpdatePaymentStatusCommand request)

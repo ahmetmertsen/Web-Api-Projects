@@ -1,4 +1,6 @@
-﻿using ECommerceAPI.Application.Features.Carts.Commands.Create;
+﻿using ECommerceAPI.Application.Consts;
+using ECommerceAPI.Application.CustomAttributes;
+using ECommerceAPI.Application.Features.Carts.Commands.Create;
 using ECommerceAPI.Application.Features.Carts.Queries.GetCartByCustomerId;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -19,6 +21,7 @@ namespace ECommerceAPI.WebAPI.Controllers
 
         [HttpGet]
         [Route("getByCustomerId/{customerId}")]
+        [AuthorizeDefinition(Menu = AuthorizeDefinitionConstants.Carts, ActionType = Domain.Enum.ActionType.Reading, Definition = "Get Cart By CustomerId")]
         public async Task<IActionResult> GetCartByCustomerId(int customerId)
         {
             var response = await _mediatR.Send(new GetCartByCustomerIdRequest(customerId));
@@ -27,6 +30,7 @@ namespace ECommerceAPI.WebAPI.Controllers
 
         [HttpPost]
         [Route("create")]
+        [AuthorizeDefinition(Menu = AuthorizeDefinitionConstants.Carts, ActionType = Domain.Enum.ActionType.Writing, Definition = "Create Cart")]
         public async Task<IActionResult> Create([FromBody] CreateCartCommand request)
         {
             var response = await _mediatR.Send(request);
