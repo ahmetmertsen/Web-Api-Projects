@@ -14,20 +14,37 @@ Kullanıcı yönetimi için geliştirilmiş bir Web API projesidir.
 - GET /api/User/getAll → Tüm kullanıcıları getirir
 - POST /api/User/create → Yeni kullanıcı ekler
 - PUT /api/User/update → Kullanıcı günceller
-- DELETE /api/User/delete/id → Kullanıcı siler
+- DELETE /api/User/delete/{id} → Kullanıcı siler
 
 ---
 
 ## Proje 2: HotelReservationAPI
 Otel rezervasyon yönetimi için geliştirilmiş Web API projesidir.
 - Müşteri yönetimi, oda yönetimi ve rezervasyon işlemleri yapılabilir.
-- Ekstra Özellik : Exception Handler Middleware
+- Ekstra Özellikler:
+  - Exception Handler Middleware
 
 **🔑Bazı EndPointler**
-- GET /api/Customer/update → Müşteri günceller
+- PUT /api/Customer/update → Müşteri günceller
 - GET /api/Room/getAll → Odaları listeler
 - POST /api/Reservation/create → Mevcut Müşteri ile yeni rezervasyon yapar
 - POST /api/Reservation/createWithCustomer → Yeni Müşteri bilgileri ile rezervasyon yapar
 - GET /api/Reservation/getById/{id} → Rezervasyon detayını getirir
+
+---
+
+## Proje 3: ECommerceAPI
+Basit bir e-ticaret uygulamasının Web API projesidir.
+- Kullanıcı, Müşteri, Adres, Ürün, Sepet, Sipariş ve Ödeme yönetimi yapılabilir.
+- Ekstra Özellikler:
+  - Exception Handler Middleware
+  - Identity + JWT ile Authentication/Authorization
+
+**🔑Bazı EndPointler**
+- POST /api/User/create → Kullanıcı kaydı yapar
+- POST /api/Auth/login → E-Posta ve Şifre ile kullanıcı girişi yönetimini yapar
+- POST /api/Order/create → Sipariş oluşturur, sepeti siler ve ürün stok güncellemesi yapar
+- GET /api/Payment/getPaymentByOrderId/{orderId} → Sipariş id'sine göre ödeme bilgilerini getirir
+- GET /api/Address/getAllByCustomerId/{customerId} → Müşterinin bütün adreslerini getirir
 
 ---
