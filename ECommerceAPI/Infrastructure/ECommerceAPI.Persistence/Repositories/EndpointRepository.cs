@@ -22,9 +22,13 @@ namespace ECommerceAPI.Persistence.Repositories
             .Include(e => e.Roles)
             .FirstOrDefaultAsync(c => c.Code == code && c.Menu.Name == menu);
 
-        public async Task<Endpoint?> GetRolesToEndpoint(string code, string menu) => await _context.Endpoints
+        public async Task<Endpoint?> GetRolesToEndpointWithMenu(string code, string menu) => await _context.Endpoints
             .Include(e => e.Roles)
             .Include(e => e.Menu)
             .FirstOrDefaultAsync(e => e.Code == code && e.Menu.Name == menu);
+
+        public async Task<Endpoint?> GetRolesToEndpoint(string code) => await _context.Endpoints
+            .Include(e => e.Roles)
+            .FirstOrDefaultAsync(e => e.Code == code);
     }
 }

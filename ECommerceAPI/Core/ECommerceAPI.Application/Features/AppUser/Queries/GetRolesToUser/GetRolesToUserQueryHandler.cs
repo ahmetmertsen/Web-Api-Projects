@@ -19,7 +19,7 @@ namespace ECommerceAPI.Application.Features.AppUser.Queries.GetRolesToUser
 
         public async Task<GetRolesToUserQueryResponse> Handle(GetRolesToUserQueryRequest request, CancellationToken cancellationToken)
         {
-            var roles = await _userService.GetRolesToUserAsync(request.UserId);
+            var roles = await _userService.GetRolesToUserAsync(request.UserId.ToString());
             GetRolesToUserQueryResponse response = new()
             {
                 UserId = request.UserId,

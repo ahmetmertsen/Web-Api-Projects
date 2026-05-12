@@ -1,6 +1,7 @@
 ﻿using ECommerceAPI.Application;
 using ECommerceAPI.Infrastructure;
 using ECommerceAPI.Persistence;
+using ECommerceAPI.WebAPI.Filters;
 using ECommerceAPI.WebAPI.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -19,7 +20,10 @@ namespace ECommerceAPI.WebAPI
 
             // Add services to the container.
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers(options =>
+            {
+                options.Filters.Add<RolePermissionFilter>();
+            });
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(c =>

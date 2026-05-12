@@ -11,6 +11,7 @@ namespace ECommerceAPI.Application.Repositories
     public interface IEndpointRepository : IRepository<Endpoint>
     {
         Task<Endpoint?> GetEndpointWithMenuByCodeAsync(string code, string menu);
-        Task<Endpoint?> GetRolesToEndpoint(string code, string menu);
+        Task<Endpoint?> GetRolesToEndpointWithMenu(string code, string menu);
+        Task<Endpoint?> GetRolesToEndpoint(string code);
     }
 }

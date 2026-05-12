@@ -1,6 +1,9 @@
-﻿using ECommerceAPI.Application.Features.AuthorizationEndpoint.Commands.AssignRoleEndpoint;
+﻿using ECommerceAPI.Application.CustomAttributes;
+using ECommerceAPI.Application.Features.AuthorizationEndpoint.Commands.AssignRoleEndpoint;
 using ECommerceAPI.Application.Features.AuthorizationEndpoint.Queries.GetRolesToEndpoint;
+using ECommerceAPI.Domain.Enum;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,6 +20,8 @@ namespace ECommerceAPI.WebAPI.Controllers
             _mediatR = mediatR;
         }
 
+        [Authorize(Roles = "Admin")]
+        [AuthorizeDefinition(Menu = "Authorization Endpoints", ActionType = ActionType.Reading, Definition = "Get Roles To Endpoint")]
         [HttpPost]
         [Route("getRolesToEndpoint")]
         public async Task<IActionResult> GetRolesToEndpoint([FromBody] GetRolesToEndpointQueryRequest request)
@@ -25,6 +30,8 @@ namespace ECommerceAPI.WebAPI.Controllers
             return Ok(response);
         }
 
+        [Authorize(Roles = "Admin")]
+        [AuthorizeDefinition(Menu = "Authorization Endpoints", ActionType = ActionType.Writing, Definition = "Assign Role Endpoint")]
         [HttpPost]
         public async Task<IActionResult> AssignRoleEndpoint(AssignRoleEndpointCommand request)
         {

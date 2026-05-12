@@ -22,6 +22,7 @@ namespace ECommerceAPI.WebAPI.Controllers
             _mediatR = mediatR;
         }
 
+        [AllowAnonymous]
         [HttpPost]
         [Route("create")]
         public async Task<IActionResult> Create([FromBody] CreateUserCommand request)

@@ -84,7 +84,7 @@ namespace ECommerceAPI.Persistence.Services
         public async Task<List<string>> GetRolesToEndpoint(string code, string menu)
         {
 
-            Endpoint? endpoint = await _unitOfWork.EndpointRepository.GetRolesToEndpoint(code, menu);
+            Endpoint? endpoint = await _unitOfWork.EndpointRepository.GetRolesToEndpointWithMenu(code, menu);
             if (endpoint == null)
             {
                 throw new NotFoundException("Endpoint bulunamadı.");

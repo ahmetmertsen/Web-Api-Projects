@@ -20,6 +20,7 @@ namespace ECommerceAPI.WebAPI.Controllers
             _mediatR = mediatR;
         }
 
+        [AllowAnonymous]
         [HttpPost]
         [Route("login")]
         public async Task<IActionResult> Login([FromBody] LoginUserCommand request)
@@ -28,6 +29,7 @@ namespace ECommerceAPI.WebAPI.Controllers
             return Ok(response);
         }
 
+        [AllowAnonymous]
         [HttpPost]
         [Route("refreshToken")]
         public async Task<IActionResult> RefreshTokenLogin([FromBody] RefreshTokenLoginCommand request)

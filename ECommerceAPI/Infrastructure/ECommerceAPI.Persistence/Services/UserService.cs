@@ -96,15 +96,48 @@ namespace ECommerceAPI.Persistence.Services
             }
         }
 
-        public async Task<string[]> GetRolesToUserAsync(int userId)
+        public async Task<string[]> GetRolesToUserAsync(string userIdOrName)
         {
-            var user = await _userManager.FindByIdAsync(userId.ToString());
+            var user = await _userManager.FindByIdAsync(userIdOrName);
             if (user == null)
             {
-                throw new NotFoundException("Kullanıcı bulunamadı.");
+                user = await _userManager.FindByNameAsync(userIdOrName);
+                if (user == null)
+                {
+                    throw new NotFoundException("Kullanıcı bulunamadı.");
+                }
             }
             var userRoles = await _userManager.GetRolesAsync(user);
             return userRoles.ToArray();
+        }
+
+        public async Task<bool> HasRolePermissionToEndpointAsync(string name, string code)
+        {
+            var userRoles = await GetRolesToUserAsync(name);
+            if (!userRoles.Any())
+            {
+                return false;
+            }
+
+            Endpoint? endpoint = await _unitOfWork.EndpointRepository.GetRolesToEndpoint(code);
+            if (endpoint == null)
+            {
+                return false;
+            }
+
+            var hasRole = false;
+            var endpointRoles = endpoint.Roles.Select(r => r.Name);
+            foreach (var userRole in userRoles)
+            {
+                foreach (var endpointRole in endpointRoles)
+                {
+                    if (userRole == endpointRole)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
     }
 }

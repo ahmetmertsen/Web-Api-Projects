@@ -14,6 +14,7 @@ namespace ECommerceAPI.Application.Abstractions.Services
         Task UpdateRefreshToken(string refreshToken, User user, DateTime accesTokenDate);
         Task<List<UserDto>> GetAllUsersAsync();
         Task AssignRoleToUserAsync(int userId, string[] roles);
-        Task<string[]> GetRolesToUserAsync(int userId);
+        Task<string[]> GetRolesToUserAsync(string userIdOrName);
+        Task<bool> HasRolePermissionToEndpointAsync(string name, string code);
     }
 }

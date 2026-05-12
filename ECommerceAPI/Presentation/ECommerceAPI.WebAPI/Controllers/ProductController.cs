@@ -25,6 +25,7 @@ namespace ECommerceAPI.WebAPI.Controllers
             _mediatR = mediator;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         [Route("getAll")]
         public async Task<IActionResult> GetAll()
@@ -33,6 +34,7 @@ namespace ECommerceAPI.WebAPI.Controllers
             return Ok(response);
         }
 
+        [AllowAnonymous]
         [HttpGet]
         [Route("getById/{id}")]
         public async Task<IActionResult> GetById(int id)
