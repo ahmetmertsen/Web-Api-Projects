@@ -8,6 +8,7 @@ using ECommerceAPI.Domain.Entities.Identity;
 using ECommerceAPI.Domain.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -73,6 +74,37 @@ namespace ECommerceAPI.Persistence.Services
             {
                 throw new NotFoundException("Kullanıcı bulunamadı!");
             }    
+        }
+
+        public async Task<List<UserDto>> GetAllUsersAsync()
+        {
+            var users = await _userManager.Users.ToListAsync();
+            var response = _mapper.Map<List<UserDto>>(users);
+
+            return response;
+        }
+
+        public async Task AssignRoleToUserAsync(int userId, string[] roles)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user != null)
+            {
+                var userRoles = await _userManager.GetRolesAsync(user);
+                await _userManager.RemoveFromRolesAsync(user, userRoles);
+
+                await _userManager.AddToRolesAsync(user, roles);
+            }
+        }
+
+        public async Task<string[]> GetRolesToUserAsync(int userId)
+        {
+            var user = await _userManager.FindByIdAsync(userId.ToString());
+            if (user == null)
+            {
+                throw new NotFoundException("Kullanıcı bulunamadı.");
+            }
+            var userRoles = await _userManager.GetRolesAsync(user);
+            return userRoles.ToArray();
         }
     }
 }

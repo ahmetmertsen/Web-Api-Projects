@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ECommerceAPI.Application.Dtos
+namespace ECommerceAPI.Application.Dtos.User
 {
     public class UserDto
     {
         public int Id { get; set; }
         public string Email { get; set; }
-
     }
 }

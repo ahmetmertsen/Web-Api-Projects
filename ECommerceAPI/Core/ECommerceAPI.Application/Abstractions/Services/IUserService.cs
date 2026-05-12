@@ -10,7 +10,10 @@ namespace ECommerceAPI.Application.Abstractions.Services
 {
     public interface IUserService
     {
-        public Task<CreateUserResponse> CreateAsync(CreateUser model);
+        Task<CreateUserResponse> CreateAsync(CreateUser model);
         Task UpdateRefreshToken(string refreshToken, User user, DateTime accesTokenDate);
+        Task<List<UserDto>> GetAllUsersAsync();
+        Task AssignRoleToUserAsync(int userId, string[] roles);
+        Task<string[]> GetRolesToUserAsync(int userId);
     }
 }

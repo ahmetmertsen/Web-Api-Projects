@@ -16,5 +16,6 @@ namespace ECommerceAPI.Application.Consts
         public const string Payments = "Payments";
         public const string Customers = "Customers";
         public const string Roles = "Roles";
+        public const string Users = "Users";
     }
 }
