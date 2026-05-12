@@ -39,10 +39,17 @@ Basit bir e-ticaret uygulamasının Web API projesidir.
 - Ekstra Özellikler:
   - Exception Handler Middleware
   - Identity + JWT ile Authentication/Authorization
+  - Kullanıcı-rol ilişkilendirme ve kullanıcıya rol atama
+  - Endpoint-rol yetkilendirme eşleştirmesi
+  - Endpoint bazlı dinamik rol yetki kontrol filtresi
 
 **🔑Bazı EndPointler**
 - POST /api/User/create → Kullanıcı kaydı yapar
 - POST /api/Auth/login → E-Posta ve Şifre ile kullanıcı girişi yönetimini yapar
+- POST /api/User/assignRoleToUser → Kullanıcıya rol atar
+- GET /api/User/getRolesToUser/{userId} → Kullanıcıya atanmış rolleri getirir
+- POST /api/AuthorizationEndpoints → Endpoint'e rol atar
+- POST /api/AuthorizationEndpoints/getRolesToEndpoint → Bir endpoint'e atanmış rolleri getirir
 - POST /api/Order/create → Sipariş oluşturur, sepeti siler ve ürün stok güncellemesi yapar
 - GET /api/Payment/getPaymentByOrderId/{orderId} → Sipariş id'sine göre ödeme bilgilerini getirir
 - GET /api/Address/getAllByCustomerId/{customerId} → Müşterinin bütün adreslerini getirir
